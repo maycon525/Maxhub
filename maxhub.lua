@@ -5,6 +5,18 @@ frame.Size = UDim2.new(0, 300, 0, 250)
 frame.Position = UDim2.new(0.5, -150, 0.5, -125)
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
+-- Botão de Fechar
+local closeBtn = Instance.new("TextButton", frame)
+closeBtn.Text = "X"
+closeBtn.Size = UDim2.new(0, 25, 0, 25)
+closeBtn.Position = UDim2.new(1, -30, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", closeBtn)
+closeBtn.MouseButton1Click:Connect(function()
+    frame.Visible = not frame.Visible
+end)
+
 local function criarBotao(txt, y)
     local b = Instance.new("TextButton", frame)
     b.Text = txt
@@ -22,32 +34,33 @@ local function hum()
 end
 
 -- Botões
-local bSpeed = criarBotao("Speed", 0.05)
-local bJump = criarBotao("Jump", 0.25)
-local bFly = criarBotao("Fly", 0.45)
-local bClip = criarBotao("NoClip", 0.65)
-local bInvis = criarBotao("Invisibility", 0.85)
+local bSpeed = criarBotao("Speed", 0.15)
+local bJump = criarBotao("Jump", 0.35)
+local bFly = criarBotao("Fly", 0.55)
+local bClip = criarBotao("NoClip", 0.75)
+local bInvis = criarBotao("Invisibility", 0.95)
 
--- Toggles
-local speedOn, jumpOn, noclipOn, invisOn = false, false, false, false
-
--- Speed Toggle
+-- Speed toggle
+local speedOn = false
 bSpeed.MouseButton1Click:Connect(function()
-    local h = hum()
-    if not h then return end
     speedOn = not speedOn
-    h.WalkSpeed = speedOn and 50 or 16
-end)
-
--- Jump Toggle
-bJump.MouseButton1Click:Connect(function()
     local h = hum()
-    if not h then return end
-    jumpOn = not jumpOn
-    h.JumpPower = jumpOn and 120 or 50
+    if h then
+        h.WalkSpeed = speedOn and 50 or 16
+    end
 end)
 
--- Fly simples
+-- Jump toggle
+local jumpOn = false
+bJump.MouseButton1Click:Connect(function()
+    jumpOn = not jumpOn
+    local h = hum()
+    if h then
+        h.JumpPower = jumpOn and 120 or 50
+    end
+end)
+
+-- Fly toggle
 local flying = false
 local UIS = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
@@ -70,10 +83,11 @@ bFly.MouseButton1Click:Connect(function()
     end
 end)
 
--- NoClip Toggle
+-- NoClip toggle
+local noclip = false
 bClip.MouseButton1Click:Connect(function()
-    noclipOn = not noclipOn
-    if noclipOn then
+    noclip = not noclip
+    if noclip then
         RS:BindToRenderStep("noclip", 1, function()
             if p.Character then
                 for _, v in pairs(p.Character:GetDescendants()) do
@@ -88,15 +102,16 @@ bClip.MouseButton1Click:Connect(function()
     end
 end)
 
--- Invisibility Toggle
+-- Invisibility toggle
+local invis = false
 bInvis.MouseButton1Click:Connect(function()
     if not p.Character or not p.Character:FindFirstChild("HumanoidRootPart") then return end
-    invisOn = not invisOn
+    invis = not invis
     for _, part in pairs(p.Character:GetDescendants()) do
         if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-            part.Transparency = invisOn and 1 or 0
+            part.Transparency = invis and 1 or 0
         elseif part:IsA("Decal") then
-            part.Transparency = invisOn and 1 or 0
+            part.Transparency = invis and 1 or 0
         end
     end
 end)
