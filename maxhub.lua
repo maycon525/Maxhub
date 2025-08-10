@@ -36,10 +36,4 @@ local CloseButton = Instance.new("TextButton", Frame)
 CloseButton.Text = "X"
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -35, 0, 5)
-CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", CloseButton)
-
--- Botão Speed
-local SpeedButton = Instance.new("TextButton", Frame)
-Speed
+CloseButton.BackgroundColor3 = Color3
