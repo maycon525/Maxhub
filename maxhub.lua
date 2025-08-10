@@ -1,4 +1,3 @@
---// GUI
 local gui = Instance.new("ScreenGui", game.CoreGui)
 local frame = Instance.new("Frame", gui)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -6,26 +5,6 @@ frame.Size = UDim2.new(0, 300, 0, 250)
 frame.Position = UDim2.new(0.5, -150, 0.5, -125)
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
--- Botão X
-local closeBtn = Instance.new("TextButton", frame)
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -35, 0, 5)
-closeBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
-closeBtn.Text = "X"
-closeBtn.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", closeBtn)
-
--- Botão flutuante pra abrir de novo
-local openBtn = Instance.new("TextButton", gui)
-openBtn.Size = UDim2.new(0, 50, 0, 50)
-openBtn.Position = UDim2.new(0, 10, 0.5, -25)
-openBtn.BackgroundColor3 = Color3.fromRGB(60, 200, 255)
-openBtn.Text = ":)"
-openBtn.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", openBtn)
-openBtn.Visible = false
-
--- Função criar botão de função
 local function criarBotao(txt, y)
     local b = Instance.new("TextButton", frame)
     b.Text = txt
@@ -49,29 +28,32 @@ local bFly = criarBotao("Fly", 0.55)
 local bClip = criarBotao("NoClip", 0.75)
 local bInvis = criarBotao("Invisibility", 0.95)
 
--- Fechar e abrir menu
-closeBtn.MouseButton1Click:Connect(function()
-    frame.Visible = false
-    openBtn.Visible = true
-end)
-openBtn.MouseButton1Click:Connect(function()
-    frame.Visible = true
-    openBtn.Visible = false
-end)
+-- Variáveis de estado
+local speedOn = false
+local jumpOn = false
+local noclip = false
+local invis = false
+local flying = false
 
--- Funções
+-- Speed Toggle
 bSpeed.MouseButton1Click:Connect(function()
     local h = hum()
-    if h then h.WalkSpeed = 50 end
+    if h then
+        speedOn = not speedOn
+        h.WalkSpeed = speedOn and 50 or 16
+    end
 end)
 
+-- Jump Toggle
 bJump.MouseButton1Click:Connect(function()
     local h = hum()
-    if h then h.JumpPower = 120 end
+    if h then
+        jumpOn = not jumpOn
+        h.JumpPower = jumpOn and 120 or 50
+    end
 end)
 
 -- Fly simples
-local flying = false
 local UIS = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
 local bp, bg
@@ -93,24 +75,32 @@ bFly.MouseButton1Click:Connect(function()
     end
 end)
 
--- NoClip
-local noclip = false
+-- NoClip Toggle
 bClip.MouseButton1Click:Connect(function()
     noclip = not noclip
-    RS:BindToRenderStep("noclip", 1, function()
-        if noclip and p.Character then
+    if noclip then
+        RS:BindToRenderStep("noclip", 1, function()
+            if p.Character then
+                for _, v in pairs(p.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
+                end
+            end
+        end)
+    else
+        RS:UnbindFromRenderStep("noclip")
+        if p.Character then
             for _, v in pairs(p.Character:GetDescendants()) do
                 if v:IsA("BasePart") then
-                    v.CanCollide = false
+                    v.CanCollide = true
                 end
             end
         end
-    end)
-    if not noclip then RS:UnbindFromRenderStep("noclip") end
+    end
 end)
 
 -- Invisibility Toggle
-local invis = false
 bInvis.MouseButton1Click:Connect(function()
     if not p.Character or not p.Character:FindFirstChild("HumanoidRootPart") then return end
     invis = not invis
