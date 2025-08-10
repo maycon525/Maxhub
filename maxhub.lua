@@ -22,38 +22,33 @@ local function hum()
 end
 
 -- Botões
-local bSpeed = criarBotao("Speed", 0.15)
-local bJump = criarBotao("Jump", 0.35)
-local bFly = criarBotao("Fly", 0.55)
-local bClip = criarBotao("NoClip", 0.75)
-local bInvis = criarBotao("Invisibility", 0.95)
+local bSpeed = criarBotao("Speed", 0.05)
+local bJump = criarBotao("Jump", 0.25)
+local bFly = criarBotao("Fly", 0.45)
+local bClip = criarBotao("NoClip", 0.65)
+local bInvis = criarBotao("Invisibility", 0.85)
 
--- Variáveis de estado
-local speedOn = false
-local jumpOn = false
-local noclip = false
-local invis = false
-local flying = false
+-- Toggles
+local speedOn, jumpOn, noclipOn, invisOn = false, false, false, false
 
 -- Speed Toggle
 bSpeed.MouseButton1Click:Connect(function()
     local h = hum()
-    if h then
-        speedOn = not speedOn
-        h.WalkSpeed = speedOn and 50 or 16
-    end
+    if not h then return end
+    speedOn = not speedOn
+    h.WalkSpeed = speedOn and 50 or 16
 end)
 
 -- Jump Toggle
 bJump.MouseButton1Click:Connect(function()
     local h = hum()
-    if h then
-        jumpOn = not jumpOn
-        h.JumpPower = jumpOn and 120 or 50
-    end
+    if not h then return end
+    jumpOn = not jumpOn
+    h.JumpPower = jumpOn and 120 or 50
 end)
 
 -- Fly simples
+local flying = false
 local UIS = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
 local bp, bg
@@ -77,8 +72,8 @@ end)
 
 -- NoClip Toggle
 bClip.MouseButton1Click:Connect(function()
-    noclip = not noclip
-    if noclip then
+    noclipOn = not noclipOn
+    if noclipOn then
         RS:BindToRenderStep("noclip", 1, function()
             if p.Character then
                 for _, v in pairs(p.Character:GetDescendants()) do
@@ -90,25 +85,18 @@ bClip.MouseButton1Click:Connect(function()
         end)
     else
         RS:UnbindFromRenderStep("noclip")
-        if p.Character then
-            for _, v in pairs(p.Character:GetDescendants()) do
-                if v:IsA("BasePart") then
-                    v.CanCollide = true
-                end
-            end
-        end
     end
 end)
 
 -- Invisibility Toggle
 bInvis.MouseButton1Click:Connect(function()
     if not p.Character or not p.Character:FindFirstChild("HumanoidRootPart") then return end
-    invis = not invis
+    invisOn = not invisOn
     for _, part in pairs(p.Character:GetDescendants()) do
         if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-            part.Transparency = invis and 1 or 0
+            part.Transparency = invisOn and 1 or 0
         elseif part:IsA("Decal") then
-            part.Transparency = invis and 1 or 0
+            part.Transparency = invisOn and 1 or 0
         end
     end
 end)
